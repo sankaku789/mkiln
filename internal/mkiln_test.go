@@ -37,8 +37,8 @@ func TestParseArgsRejectsTypstStyle(t *testing.T) {
 
 func TestPandocArgsRemainSeparate(t *testing.T) {
 	html := HTMLBuild{"note.md", "note.html", "default.yaml", "default.css"}
-	wantHTML := []string{"note.md", "--defaults", "default.yaml", "--css", "default.css", "-o", "note.html"}
-	if got := htmlPandocArgs(html); !reflect.DeepEqual(got, wantHTML) {
+	wantHTML := []string{"note.md", "--defaults", "default.yaml", "--include-in-header", "style.html", "-o", "note.html"}
+	if got := htmlPandocArgs(html, "style.html"); !reflect.DeepEqual(got, wantHTML) {
 		t.Fatalf("htmlPandocArgs() = %q, want %q", got, wantHTML)
 	}
 	typst := TypstBuild{"note.md", "note.typ"}

@@ -67,12 +67,33 @@ func resolveStyle(name string) (string, error) {
 	return path, nil
 }
 
-func htmlPandocArgs(b HTMLBuild) []string {
-	return []string{b.Input, "--defaults", b.DefaultsPath, "--css", b.CSSPath, "-o", b.Output}
+func htmlPandocArgs(b HTMLBuild, styleHeaderPath string) []string {
+	return []string{b.Input, "--defaults", b.DefaultsPath, "--include-in-header", styleHeaderPath, "-o", b.Output}
 }
 
 func runHTMLPandoc(pandocPath string, b HTMLBuild) error {
-	return runCommand(pandocPath, htmlPandocArgs(b))
+	css, err := os.ReadFile(b.CSSPath)
+	if err != nil {
+		return fmt.Errorf("read style %q: %w", b.CSSPath, err)
+	}
+	outline, err := assets.ReadFile("assets/outline.js")
+	if err != nil {
+		return fmt.Errorf("read outline script: %w", err)
+	}
+	header, err := os.CreateTemp("", "mkiln-style-*.html")
+	if err != nil {
+		return fmt.Errorf("create temporary style header: %w", err)
+	}
+	headerPath := header.Name()
+	defer os.Remove(headerPath)
+	if _, err := fmt.Fprintf(header, "<style>\n%s\n</style>\n<script>\n%s\n</script>\n", css, outline); err != nil {
+		header.Close()
+		return fmt.Errorf("write temporary style header: %w", err)
+	}
+	if err := header.Close(); err != nil {
+		return fmt.Errorf("close temporary style header: %w", err)
+	}
+	return runCommand(pandocPath, htmlPandocArgs(b, headerPath))
 }
 
 func resolveTypst(opts Options) (TypstBuild, error) {

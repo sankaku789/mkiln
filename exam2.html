@@ -4,8 +4,154 @@
   <meta charset="utf-8" />
   <meta name="generator" content="pandoc" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
-  <title>exam2</title>
+  <meta name="dcterms.date" content="2026-08-23" />
+  <title>mkiln 表示デバッグ</title>
   <style>
+    html {
+      color: #1a1a1a;
+      background-color: #fdfdfd;
+    }
+    body {
+      margin: 0 auto;
+      max-width: 36em;
+      padding-left: 50px;
+      padding-right: 50px;
+      padding-top: 50px;
+      padding-bottom: 50px;
+      hyphens: auto;
+      overflow-wrap: break-word;
+      text-rendering: optimizeLegibility;
+      font-kerning: normal;
+    }
+    @media (max-width: 600px) {
+      body {
+        font-size: 0.9em;
+        padding: 12px;
+      }
+      h1 {
+        font-size: 1.8em;
+      }
+    }
+    @media print {
+      html {
+        background-color: white;
+      }
+      body {
+        background-color: transparent;
+        color: black;
+        font-size: 12pt;
+      }
+      p, h2, h3 {
+        orphans: 3;
+        widows: 3;
+      }
+      h2, h3, h4 {
+        page-break-after: avoid;
+      }
+    }
+    p {
+      margin: 1em 0;
+    }
+    a {
+      color: #1a1a1a;
+    }
+    a:visited {
+      color: #1a1a1a;
+    }
+    img {
+      max-width: 100%;
+    }
+    svg {
+      height: auto;
+      max-width: 100%;
+    }
+    h1, h2, h3, h4, h5, h6 {
+      margin-top: 1.4em;
+    }
+    h5, h6 {
+      font-size: 1em;
+      font-style: italic;
+    }
+    h6 {
+      font-weight: normal;
+    }
+    ol, ul {
+      padding-left: 1.7em;
+      margin-top: 1em;
+    }
+    li > ol, li > ul {
+      margin-top: 0;
+    }
+    blockquote {
+      margin: 1em 0 1em 1.7em;
+      padding-left: 1em;
+      border-left: 2px solid #e6e6e6;
+      color: #606060;
+    }
+    code {
+      font-family: Menlo, Monaco, Consolas, 'Lucida Console', monospace;
+      font-size: 85%;
+      margin: 0;
+      hyphens: manual;
+    }
+    pre {
+      margin: 1em 0;
+      overflow: auto;
+    }
+    pre code {
+      padding: 0;
+      overflow: visible;
+      overflow-wrap: normal;
+    }
+    .sourceCode {
+     background-color: transparent;
+     overflow: visible;
+    }
+    hr {
+      background-color: #1a1a1a;
+      border: none;
+      height: 1px;
+      margin: 1em 0;
+    }
+    table {
+      margin: 1em 0;
+      border-collapse: collapse;
+      width: 100%;
+      overflow-x: auto;
+      display: block;
+      font-variant-numeric: lining-nums tabular-nums;
+    }
+    table caption {
+      margin-bottom: 0.75em;
+    }
+    tbody {
+      margin-top: 0.5em;
+      border-top: 1px solid #1a1a1a;
+      border-bottom: 1px solid #1a1a1a;
+    }
+    th {
+      border-top: 1px solid #1a1a1a;
+      padding: 0.25em 0.5em 0.25em 0.5em;
+    }
+    td {
+      padding: 0.125em 0.5em 0.25em 0.5em;
+    }
+    header {
+      margin-bottom: 4em;
+      text-align: center;
+    }
+    #TOC li {
+      list-style: none;
+    }
+    #TOC ul {
+      padding-left: 1.3em;
+    }
+    #TOC > ul {
+      padding-left: 0;
+    }
+    #TOC a:not(:hover) {
+      text-decoration: none;
+    }
     code{white-space: pre-wrap;}
     span.smallcaps{font-variant: small-caps;}
     div.columns{display: flex; gap: min(4vw, 1.5em);}
@@ -20,222 +166,902 @@
       margin: 0 0.8em 0.2em -1.6em;
       vertical-align: middle;
     }
+    /* CSS for syntax highlighting */
+    pre > code.sourceCode { white-space: pre; position: relative; }
+    pre > code.sourceCode > span { line-height: 1.25; }
+    pre > code.sourceCode > span:empty { height: 1.2em; }
+    .sourceCode { overflow: visible; }
+    code.sourceCode > span { color: inherit; text-decoration: inherit; }
+    div.sourceCode { margin: 1em 0; }
+    pre.sourceCode { margin: 0; }
+    @media screen {
+    div.sourceCode { overflow: auto; }
+    }
+    @media print {
+    pre > code.sourceCode { white-space: pre-wrap; }
+    pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+    }
+    pre.numberSource code
+      { counter-reset: source-line 0; }
+    pre.numberSource code > span
+      { position: relative; left: -4em; counter-increment: source-line; }
+    pre.numberSource code > span > a:first-child::before
+      { content: counter(source-line);
+        position: relative; left: -1em; text-align: right; vertical-align: baseline;
+        border: none; display: inline-block;
+        -webkit-touch-callout: none; -webkit-user-select: none;
+        -khtml-user-select: none; -moz-user-select: none;
+        -ms-user-select: none; user-select: none;
+        padding: 0 4px; width: 4em;
+        color: #aaaaaa;
+      }
+    pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+    div.sourceCode
+      {   }
+    @media screen {
+    pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+    }
+    code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+    code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+    code span.at { color: #7d9029; } /* Attribute */
+    code span.bn { color: #40a070; } /* BaseN */
+    code span.bu { color: #008000; } /* BuiltIn */
+    code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+    code span.ch { color: #4070a0; } /* Char */
+    code span.cn { color: #880000; } /* Constant */
+    code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+    code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+    code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+    code span.dt { color: #902000; } /* DataType */
+    code span.dv { color: #40a070; } /* DecVal */
+    code span.er { color: #ff0000; font-weight: bold; } /* Error */
+    code span.ex { } /* Extension */
+    code span.fl { color: #40a070; } /* Float */
+    code span.fu { color: #06287e; } /* Function */
+    code span.im { color: #008000; font-weight: bold; } /* Import */
+    code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+    code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+    code span.op { color: #666666; } /* Operator */
+    code span.ot { color: #007020; } /* Other */
+    code span.pp { color: #bc7a00; } /* Preprocessor */
+    code span.sc { color: #4070a0; } /* SpecialChar */
+    code span.ss { color: #bb6688; } /* SpecialString */
+    code span.st { color: #4070a0; } /* String */
+    code span.va { color: #19177c; } /* Variable */
+    code span.vs { color: #4070a0; } /* VerbatimString */
+    code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
   </style>
-  <link rel="stylesheet" href="/home/sankaku785/.config/mkiln/styles/default.css" />
+  <style>
+  :root {
+    color-scheme: light;
+    --color-primary: #0017c1;
+    --color-primary-hover: #00118f;
+    --color-primary-subtle: #e8f1fe;
+    --color-text: #333333;
+    --color-heading: #1a1a1a;
+    --color-text-muted: #4d4d4d;
+    --color-background: #ffffff;
+    --color-surface: #f2f2f2;
+    --color-border: #949494;
+    --color-link-visited: #5c10be;
+    --color-focus: #ffd43d;
+    --font-sans: "Noto Sans CJK JP", "Noto Sans JP", "Yu Gothic", "Meiryo", sans-serif;
+    --font-mono: "Noto Sans Mono CJK JP", "Noto Sans Mono", monospace;
+    font-family: var(--font-sans);
+    font-size: 100%;
+    line-height: 1.7;
+    overflow-wrap: break-word;
+    background: var(--color-background);
+    color: var(--color-text);
+  }
+
+  body {
+    box-sizing: border-box;
+    width: min(100% - 2rem, 48rem);
+    max-width: none;
+    margin: 0 auto;
+    padding-block: 3rem 6rem;
+    background: var(--color-background);
+    color: var(--color-text);
+    font-size: 1rem;
+    letter-spacing: 0.02em;
+  }
+
+  *,
+  *::before,
+  *::after {
+    box-sizing: inherit;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    color: var(--color-heading);
+    font-weight: 700;
+    font-style: normal;
+    line-height: 1.5;
+    text-wrap: pretty;
+  }
+
+  h1 {
+    margin-block: 0 2.5rem;
+    font-size: 2.8125rem;
+    line-height: 1.4;
+    letter-spacing: 0.01em;
+  }
+
+  h2 {
+    margin-block: 4rem 1.5rem;
+    font-size: 2rem;
+    letter-spacing: 0.01em;
+  }
+
+  h3 {
+    margin-block: 3rem 1.5rem;
+    font-size: 1.5rem;
+  }
+
+  h4 {
+    margin-block: 2.5rem 1rem;
+    font-size: 1.25rem;
+  }
+
+  h5 {
+    margin-block: 2rem 1rem;
+    font-size: 1.125rem;
+  }
+
+  h6 {
+    margin-block: 2rem 1rem;
+    font-size: 1rem;
+  }
+
+  p,
+  ul,
+  ol,
+  dl,
+  table,
+  blockquote,
+  pre,
+  figure {
+    margin-block: 0 1.5rem;
+  }
+
+  ul,
+  ol {
+    padding-inline-start: 1.75rem;
+  }
+
+  li + li {
+    margin-block-start: 0.5rem;
+  }
+
+  ul ul { list-style-type: circle; }
+  ul ul ul { list-style-type: square; }
+
+  dt {
+    font-weight: 700;
+  }
+
+  dd {
+    margin-inline-start: 1.5rem;
+    margin-block-end: 1rem;
+  }
+
+  a {
+    color: var(--color-primary);
+    text-decoration: underline;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 0.2em;
+  }
+
+  a:visited {
+    color: var(--color-link-visited);
+  }
+
+  a:hover {
+    color: var(--color-primary-hover);
+    text-decoration-thickness: 2px;
+  }
+
+  :where(a, button, input, select, textarea, summary):focus-visible {
+    color: var(--color-text);
+    background: var(--color-focus);
+    border-radius: 4px;
+    outline: 2px solid #000000;
+    outline-offset: 2px;
+    text-decoration: none;
+  }
+
+  blockquote {
+    margin-inline: 0;
+    padding: 0.5rem 1rem 0.5rem 1.5rem;
+    border-inline-start: 8px solid #767676;
+    background: transparent;
+    color: var(--color-text);
+  }
+
+  blockquote > :last-child {
+    margin-block-end: 0;
+  }
+
+  code,
+  kbd,
+  samp,
+  pre {
+    font-family: var(--font-mono);
+  }
+
+  :not(pre) > code,
+  kbd,
+  samp {
+    font-size: 0.875rem;
+  }
+
+  pre {
+    max-width: 100%;
+    padding: 1rem;
+    overflow-x: auto;
+    border: 1px solid var(--color-border);
+    border-radius: 8px;
+    background: var(--color-surface);
+    color: var(--color-text);
+    font-size: 0.875rem;
+    line-height: 1.5;
+    letter-spacing: 0;
+    tab-size: 2;
+  }
+
+  pre code {
+    padding: 0;
+    background: transparent;
+    font-size: inherit;
+  }
+
+  div.sourceCode {
+    margin-block: 0 2rem;
+    overflow-x: auto;
+    border: 1px solid var(--color-border);
+    border-radius: 8px;
+    background: var(--color-surface);
+  }
+
+  pre.sourceCode {
+    margin: 0;
+    border: 0;
+    background: transparent;
+    color: var(--color-text);
+  }
+
+  .math.display {
+    display: block;
+    margin-block: 2rem;
+    padding-block: 1rem;
+    overflow-x: auto;
+    text-align: center;
+  }
+
+  hr {
+    margin-block: 3rem;
+    border: 0;
+    border-top: 1px solid var(--color-border);
+  }
+
+  figure {
+    margin-inline: 0;
+  }
+
+  img,
+  svg,
+  video {
+    display: block;
+    max-width: 100%;
+    height: auto;
+  }
+
+  figcaption {
+    margin-block-start: 0.5rem;
+    color: var(--color-text-muted);
+    font-size: 0.875rem;
+    line-height: 1.5;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    border-spacing: 0;
+    font-size: 1rem;
+    line-height: 1.7;
+  }
+
+  th,
+  td {
+    padding: 0.75rem 1rem;
+    border: 0;
+    border-bottom: 1px solid var(--color-border);
+    text-align: start;
+    vertical-align: top;
+  }
+
+  th {
+    border-bottom-color: #000000;
+    background: var(--color-surface);
+    font-weight: 700;
+  }
+
+  caption {
+    margin-block-end: 0.5rem;
+    font-weight: 700;
+    text-align: start;
+  }
+
+  input,
+  button,
+  select,
+  textarea {
+    font: inherit;
+  }
+
+  ::selection {
+    background: var(--color-primary-subtle);
+    color: var(--color-text);
+  }
+
+  #TOC {
+    margin: 0;
+    padding: 0;
+    border: 0;
+    border-radius: 8px;
+    background: var(--color-background);
+    font-size: 0.875rem;
+    line-height: 1.5;
+    letter-spacing: 0;
+  }
+
+  #TOC > ul {
+    position: absolute;
+    z-index: 2;
+    inset-block-start: 100%;
+    inset-inline: 0;
+    display: none;
+    max-height: min(60vh, 32rem);
+    margin: 0;
+    padding: 1rem;
+    overflow-y: auto;
+    border: 1px solid var(--color-border);
+    border-top: 0;
+    border-radius: 0;
+    background: var(--color-background);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.16);
+  }
+
+  #TOC.is-open > ul {
+    display: block;
+  }
+
+  .toc-toggle {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    width: auto;
+    min-height: 3rem;
+    padding: 0.75rem 1rem;
+    border: 0;
+    border-radius: 4px;
+    background: var(--color-background);
+    color: var(--color-text);
+    font-weight: 700;
+    text-align: start;
+    cursor: pointer;
+  }
+
+  #TOC.is-open .toc-toggle {
+    background: var(--color-primary-subtle);
+  }
+
+  .toc-toggle:hover {
+    background: var(--color-primary-subtle);
+  }
+
+  .mobile-doc-header {
+    position: sticky;
+    z-index: 10;
+    inset-block-start: 0;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    width: calc(100% + 2rem);
+    min-height: 4rem;
+    margin: -2rem -1rem 2rem;
+    padding-inline: 1rem;
+    border-bottom: 1px solid var(--color-border);
+    background: var(--color-background);
+  }
+
+  #TOC > h2 {
+    margin: 0 0 1rem;
+    padding: 0;
+    border: 0;
+    font-size: 1rem;
+    line-height: 1.7;
+  }
+
+  #TOC ul {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  #TOC ul ul {
+    margin-block-start: 0.25rem;
+    padding-inline-start: 1rem;
+  }
+
+  #TOC li + li {
+    margin-block-start: 0.25rem;
+  }
+
+  #TOC a,
+  #TOC a:visited {
+    display: block;
+    padding: 0.375rem 0.5rem;
+    border-radius: 4px;
+    color: var(--color-text);
+    text-decoration: none;
+  }
+
+  #TOC a:hover {
+    background: var(--color-primary-subtle);
+    color: var(--color-primary-hover);
+    text-decoration: underline;
+    text-underline-offset: 0.2em;
+  }
+
+  #TOC a.is-current {
+    background: var(--color-primary-subtle);
+    color: var(--color-primary);
+    font-weight: 700;
+  }
+
+  @media (min-width: 64rem) {
+    body {
+      width: min(100% - 2rem, 79rem);
+      margin-inline-start: max(1rem, calc(50% - 41.5rem));
+      margin-inline-end: auto;
+      padding-inline-start: 19rem;
+    }
+
+    #TOC {
+      position: fixed;
+      z-index: 1;
+      inset-block-start: 0;
+      inset-inline-start: 0;
+      width: 16rem;
+      height: 100vh;
+      max-height: none;
+      margin: 0;
+      padding: 3rem 1.5rem;
+      overflow-y: auto;
+      overscroll-behavior: contain;
+      border-inline-end: 1px solid var(--color-border);
+      border-radius: 0;
+      scrollbar-gutter: stable;
+    }
+
+    #TOC > ul {
+      position: static;
+      display: block;
+      max-height: none;
+      padding: 0;
+      overflow: visible;
+      border: 0;
+      box-shadow: none;
+    }
+
+    .toc-toggle {
+      display: none;
+    }
+
+    .mobile-doc-header {
+      display: contents;
+    }
+
+  }
+
+  @media (max-width: 47.999rem) {
+    body {
+      width: min(100% - 2rem, 48rem);
+      padding-block: 2rem 4rem;
+    }
+
+    h1 {
+      margin-block-end: 2rem;
+      font-size: 1.75rem;
+      line-height: 1.5;
+    }
+
+    h2 {
+      margin-block: 2.5rem 1.5rem;
+      font-size: 1.5rem;
+    }
+
+    h3 {
+      margin-block: 2rem 1rem;
+      font-size: 1.375rem;
+    }
+
+    table {
+      font-size: 0.875rem;
+    }
+
+    th,
+    td {
+      padding: 0.625rem 0.75rem;
+    }
+  }
+
+  @media print {
+    body {
+      width: auto;
+      padding: 0;
+    }
+
+    a {
+      color: inherit;
+    }
+
+    pre,
+    blockquote,
+    table,
+    img {
+      break-inside: avoid;
+    }
+  }
+
+  </style>
+  <script>
+  addEventListener("DOMContentLoaded", () => {
+    const toc = document.getElementById("TOC");
+    if (!toc) return;
+
+    const list = toc.querySelector(":scope > ul");
+    if (list) {
+      list.id = "toc-list";
+      const toggle = document.createElement("button");
+      toggle.className = "toc-toggle";
+      toggle.type = "button";
+      toggle.setAttribute("aria-controls", list.id);
+      toggle.setAttribute("aria-expanded", "false");
+      toggle.innerHTML = '<span aria-hidden="true">☰</span><span>メニュー</span>';
+      toggle.addEventListener("click", () => {
+        const open = toc.classList.toggle("is-open");
+        toggle.setAttribute("aria-expanded", String(open));
+      });
+      toc.prepend(toggle);
+
+      const mobileHeader = document.createElement("div");
+      mobileHeader.className = "mobile-doc-header";
+      mobileHeader.append(toc);
+      document.body.prepend(mobileHeader);
+    }
+
+    const links = [...toc.querySelectorAll('a[href^="#"]')];
+    const items = links
+      .map((link) => ({ link, heading: document.getElementById(decodeURIComponent(link.hash.slice(1))) }))
+      .filter((item) => item.heading);
+
+    if (!items.length) return;
+
+    let current;
+    let scheduled = false;
+
+    const update = () => {
+      const marker = Math.min(160, window.innerHeight * 0.25);
+      const active = items.reduce((selected, item) =>
+        item.heading.getBoundingClientRect().top <= marker ? item : selected, items[0]);
+
+      if (active !== current) {
+        current?.link.classList.remove("is-current");
+        current?.link.removeAttribute("aria-current");
+        active.link.classList.add("is-current");
+        active.link.setAttribute("aria-current", "location");
+        current = active;
+      }
+      scheduled = false;
+    };
+
+    const schedule = () => {
+      if (!scheduled) {
+        scheduled = true;
+        requestAnimationFrame(update);
+      }
+    };
+
+    addEventListener("scroll", schedule, { passive: true });
+    addEventListener("resize", schedule);
+    links.forEach((link) => link.addEventListener("click", () => {
+      toc.classList.remove("is-open");
+      toc.querySelector(".toc-toggle")?.setAttribute("aria-expanded", "false");
+    }));
+    update();
+  });
+
+  </script>
+  <script defer=""
+  src="https://cdn.jsdelivr.net/npm/katex@0.18.4/dist/katex.min.js"></script>
+  <script>document.addEventListener("DOMContentLoaded", function () {
+ var mathElements = document.getElementsByClassName("math");
+ var macros = [];
+ for (var i = 0; i < mathElements.length; i++) {
+  var texText = mathElements[i].firstChild;
+  if (mathElements[i].tagName == "SPAN") {
+   katex.render(texText.data, mathElements[i], {
+    displayMode: mathElements[i].classList.contains('display'),
+    throwOnError: false,
+    macros: macros,
+    fleqn: false
+   });
+}}});
+  </script>
+  <link rel="stylesheet"
+  href="https://cdn.jsdelivr.net/npm/katex@0.18.4/dist/katex.min.css" />
 </head>
 <body>
-<h1
-id="組込みシステムにおける各ハードウェア">組込みシステムにおける各ハードウェア</h1>
-<h2 id="cpu">CPU</h2>
+<header id="title-block-header">
+<h1 class="title">mkiln 表示デバッグ</h1>
+<p class="subtitle">DADSスタイル・アウトライン・Pandoc要素の確認</p>
+<p class="date">2026-08-23</p>
+</header>
+<nav id="TOC" role="doc-toc">
 <ul>
-<li>フェッチ、デコード、実行を司る</li>
-<li>パイプライン化：処理を分割して並行処理
+<li><a href="#基本タイポグラフィ"
+id="toc-基本タイポグラフィ">基本タイポグラフィ</a>
 <ul>
-<li>ex: 処理が1CLKとすると、1命令は3CLK</li>
-<li>単一処理の実行時間(レイテンシ)は変わらないが、複数処理の処理効率(スループット)を向上できる</li>
+<li><a href="#見出しレベル2" id="toc-見出しレベル2">見出しレベル2</a>
+<ul>
+<li><a href="#見出しレベル3"
+id="toc-見出しレベル3">見出しレベル3</a></li>
 </ul></li>
-<li>RISCは単純な命令で構成される
-<ul>
-<li>命令長が固定であるため、パイプライン化で有利</li>
-<li>消費電力が比較的小さい</li>
 </ul></li>
-<li>CISCは複雑な処理を1命令で表せる
+<li><a href="#インライン要素" id="toc-インライン要素">インライン要素</a>
 <ul>
-<li>命令長が可変長であるため、パイプライン化で不利</li>
-<li>高性能だが、消費電力も大きい</li>
+<li><a href="#文字装飾" id="toc-文字装飾">文字装飾</a></li>
+<li><a href="#リンク" id="toc-リンク">リンク</a></li>
+<li><a href="#脚注" id="toc-脚注">脚注</a></li>
 </ul></li>
-</ul>
-<h3 id="マルチコア">マルチコア</h3>
+<li><a href="#リスト" id="toc-リスト">リスト</a>
 <ul>
-<li><p>ホモジニアスマルチコア：同じ種類のプロセッサを使用</p></li>
-<li><p>ヘテロジニアスマルチコア：複数の種類のプロセッサを使用</p></li>
-<li><p>ハードウェアアクセラレーション：CPU以外の演算デバイスを組み合わせることで、処理性能の向上を目指す</p></li>
-<li><p>実装では、リソース管理が難しい</p>
-<ul>
-<li>コア内部での排他制御だけではなく，コア間での排他制御も必要</li>
-<li>非対称型ではメモリ保護も…</li>
+<li><a href="#箇条書き" id="toc-箇条書き">箇条書き</a></li>
+<li><a href="#番号付きリスト"
+id="toc-番号付きリスト">番号付きリスト</a></li>
+<li><a href="#タスクリスト" id="toc-タスクリスト">タスクリスト</a></li>
 </ul></li>
-</ul>
-<p><strong>演算デバイスの比較</strong> -
-MPU：CPUとメモリ、I/O周りを統合したもの -
-GPU：高次元の信号処理に特化したプロセッサ、汎用並列演算能力が高い。 -
-FPGA：回路を自由に構成できるLSI。低周波数で特化した並列演算を構成できる。
-- ASIC：カスタムIC、作り直すコストは高いがかなり特化した処理ができる -
-量産性がコストパフォーマンスに影響する</p>
+<li><a href="#引用と区切り" id="toc-引用と区切り">引用と区切り</a>
 <ul>
-<li>消費電力：MPU &lt; … &lt; ASIC</li>
-<li>開発コスト：MPU &lt; … &lt; ASIC</li>
-<li>性能：MPU &lt; … &lt; ASIC</li>
-</ul>
-<p><strong>ヘテロジニアスの構成:</strong> -
-組込みでは、ヘテロジニアスマルチコアが主流 -
-実行する処理の特性や，システムに求められる性能・機能にあったデバイスを選定したほうが，消費電力を抑えることや，コストダウンに繋がるため
-- また、特定の演算量が多い処理を高速化するため -
-結局、目的によって最適な組み合わせを見つける —</p>
-<ul>
-<li>構成例1：高速CPUにLinux、低速CPUにRTOS
-<ul>
-<li>直接ハードウェアを制御するところはRTOSに任せる</li>
-<li>リアルタイム処理側は高いセキュリティが求められる</li>
+<li><a href="#引用" id="toc-引用">引用</a></li>
+<li><a href="#水平線" id="toc-水平線">水平線</a></li>
 </ul></li>
-<li>構成例2：CPU+FPGA
+<li><a href="#コード" id="toc-コード">コード</a>
 <ul>
-<li>画像処理の前処理にFPGAを利用</li>
+<li><a href="#コードブロック"
+id="toc-コードブロック">コードブロック</a></li>
+<li><a href="#長いコード行" id="toc-長いコード行">長いコード行</a></li>
 </ul></li>
-<li>構成例3：CPU+ASIC
+<li><a href="#表" id="toc-表">表</a>
 <ul>
-<li>携帯電話など。ASICに電波処理をさせる</li>
+<li><a href="#基本テーブル" id="toc-基本テーブル">基本テーブル</a></li>
+<li><a href="#内容量の多いテーブル"
+id="toc-内容量の多いテーブル">内容量の多いテーブル</a></li>
 </ul></li>
-</ul>
-<p><strong>ホモジニアスにおけるコア</strong> -
-対称型：複数コア1OS、わかりやすく、ソフトプラットフォームが単一 -
-非対称型：複数コア複数OS、わかりずらいが、コアごとに特徴をもたせやすい -
-Inttel 12th latter, Snapdragon</p>
-<h2 id="メモリ">メモリ</h2>
+<li><a href="#数式" id="toc-数式">数式</a>
 <ul>
-<li>ROM：不揮発性、電源供給がなくてもデータ保持可能(低速)</li>
-<li>RAM：揮発性、電源供給がないとデータが消える(高速)</li>
-<li>メモリにはアドレスが割り当てられる。
-<ul>
-<li>この割り当て範囲の定義をアドレス空間という</li>
+<li><a href="#インライン数式"
+id="toc-インライン数式">インライン数式</a></li>
+<li><a href="#ディスプレイ数式"
+id="toc-ディスプレイ数式">ディスプレイ数式</a></li>
 </ul></li>
-<li>高速アクセスができないと、システムのボトルネックとなる
+<li><a href="#レスポンシブ確認"
+id="toc-レスポンシブ確認">レスポンシブ確認</a>
 <ul>
-<li>MPUは頻繁にメモリアクセスする</li>
-<li>命令実行時間より、データ読み出しに時間がかかるのでオーバヘッド</li>
+<li><a href="#モバイル幅" id="toc-モバイル幅">モバイル幅</a></li>
+<li><a href="#タブレット幅" id="toc-タブレット幅">タブレット幅</a></li>
+<li><a href="#デスクトップ幅"
+id="toc-デスクトップ幅">デスクトップ幅</a></li>
+<li><a href="#文字拡大" id="toc-文字拡大">文字拡大</a></li>
+</ul></li>
+<li><a href="#アウトライン追従"
+id="toc-アウトライン追従">アウトライン追従</a>
+<ul>
+<li><a href="#スクロール位置の検出"
+id="toc-スクロール位置の検出">スクロール位置の検出</a></li>
+<li><a href="#キーボード操作"
+id="toc-キーボード操作">キーボード操作</a></li>
+<li><a href="#最終セクション"
+id="toc-最終セクション">最終セクション</a></li>
 </ul></li>
 </ul>
-<p><strong>メモリの種類</strong></p>
+</nav>
+<h1 id="基本タイポグラフィ">基本タイポグラフィ</h1>
+<p>この文書は、mkilnが生成するHTMLの表示を確認するためのデバッグ用Markdownです。本文、見出し、アウトライン、リンク、表、コード、数式などを一度に確認できます。</p>
+<p>通常の本文は16px以上、行間1.7で表示します。日本語が長く続いた場合でも、一行が広がりすぎず、ブラウザの文字拡大時に内容が欠落しないことを確認します。英数字を含む文章として、Digital
+Agency Design SystemとMarkdown renderingの折り返しも確認します。</p>
+<h2 id="見出しレベル2">見出しレベル2</h2>
+<p>見出しレベル2は大きなセクションを表します。デスクトップとモバイルで文字サイズと上下余白が変化します。</p>
+<h3 id="見出しレベル3">見出しレベル3</h3>
+<p>見出しレベル3はアウトラインにも表示されます。現在位置へスクロールすると、左側の対応項目が青い背景で強調されます。</p>
+<h4 id="見出しレベル4">見出しレベル4</h4>
+<p>レベル4以降は本文には表示されますが、既定のアウトライン深度3では目次に含まれません。</p>
+<h5 id="見出しレベル5">見出しレベル5</h5>
+<p>小さな見出しでも本文との区別が保たれることを確認します。</p>
+<h6 id="見出しレベル6">見出しレベル6</h6>
+<p>最下位の見出しです。見出しレベルは視覚サイズではなく文書構造として使用します。</p>
+<h1 id="インライン要素">インライン要素</h1>
+<h2 id="文字装飾">文字装飾</h2>
+<p>これは<strong>太字</strong>、これは<em>強調</em>、これは<del>取り消し線</del>です。インラインコードは<code>go test ./...</code>のように表示されます。キーボード入力や識別子として<code>Ctrl+Shift+R</code>、<code>HTMLBuild</code>、<code>--include-in-header</code>も確認します。</p>
+<h2 id="リンク">リンク</h2>
+<p><a
+href="https://design.digital.go.jp/dads/">デジタル庁デザインシステム</a>への通常リンクです。一度開いたリンクは訪問済みの紫色になり、キーボードフォーカス時は黄色背景と黒いアウトラインが表示されます。</p>
+<p>長いURLの折り返し確認: <a
+href="https://example.com/documents/debug/very-long-path/that-must-wrap-without-expanding-the-document-beyond-the-viewport"
+class="uri">https://example.com/documents/debug/very-long-path/that-must-wrap-without-expanding-the-document-beyond-the-viewport</a></p>
+<h2 id="脚注">脚注</h2>
+<p>本文中に脚注を置きます。<a href="#fn1" class="footnote-ref"
+id="fnref1" role="doc-noteref"><sup>1</sup></a>
+脚注リンクをキーボードで操作でき、本文へ戻れることを確認します。</p>
+<h1 id="リスト">リスト</h1>
+<h2 id="箇条書き">箇条書き</h2>
 <ul>
-<li>DRAM：コンデンサ、大容量、低価格、低速
+<li>第1階層は黒丸です</li>
+<li>長い項目は複数行へ折り返され、2行目が項目本文の開始位置に揃います。日本語の文章が増えてもアウトラインや本文領域を押し広げません
 <ul>
-<li>放置すると放電されるため<strong>リフレッシュ</strong></li>
-<li>メモリアクセス時に放電されるため<strong>プリチャージ</strong></li>
-<li>プリチャージによって消費電力が大きくなる。</li>
+<li>第2階層は白丸です</li>
+<li>関連する項目をまとめます
+<ul>
+<li>第3階層は四角です</li>
+<li>深い階層でも余白を維持します</li>
 </ul></li>
-<li>SRAM：FF、小容量、高価格、高速
-<ul>
-<li>キャシュに使用</li>
 </ul></li>
+<li>最後の項目です</li>
 </ul>
-<p><strong>キャッシュメモリ</strong> -
-MPUと主記憶の間に主記憶より高速なメモリを設置することで、メモリアクセス性能を高める
-- 主記憶アクセス時のデータ・命令をキャッシュにも保存する -
-ヒット：キャッシュにデータがあると性能向上 -
-ミスヒット：キャッシュにデータがないと性能低下 -
-キャッシュにないので主記憶にアクセス -
-ミスヒットのタイミングは予測しづらい -
-整合性の問題：キャッシュのみでデータ更新すると、主記憶との整合性がなくなる
--
-ライトバック方式：主記憶を更新しなければならないタイミングでキャッシュのデータを主記憶に書き込む
-- 主記憶アクセスを低減できるが、複雑な制御が必要 -
-ライトスルー方式：適宜、主記憶に書く -
-単純だが、アクセス回数は増加する</p>
-<p><strong>DMA</strong> - MPUを経由せず、「直接」アクセスする -
-NICからのデータなど - DMAコントローラはバスを専有可 -
-バースト転送：全データ転送まで使用権を離さない、アドレス指定が最初だけなので、高速にデータ取得可能
-- バイト転送：1バイトずつ、確保と解放をする(ラウンドロビン的に)</p>
-<p><strong>MPU</strong> - 論理アドレスを使用するためのもの -
-動的確保と仮想記憶 - メモリ保護ができる</p>
-<h1 id="物理世界とのやりとり">物理世界とのやりとり</h1>
-<h2 id="adc">ADC</h2>
-<ul>
-<li>標本化：時間軸方向の離散化
-<ul>
-<li>標本化定理：対象の信号の周波数の2倍よりも高い周波数で標本化すると，正確にデジタル信号に変換できる</li>
-</ul></li>
-<li>量子化：電圧(振幅)方向の離散化
-<ul>
-<li>分解能：量子化に使えるビット数で精度が決 ## PWM(パルス幅変調)</li>
-</ul></li>
-<li>モータ制御で使用
-<ul>
-<li>実質「電圧」が低下するため，速度だけではなく力（トルク）も落ちる．</li>
-<li>モータの特性にもよるため，デューティ比に対して比例関係で「速度」のみが減速するわけではない．</li>
-</ul></li>
-<li>1周期の矩形パルスのうち，Hiレベルが占める割合をデューティ比として変動させる</li>
-<li>デューティ比：1周期のうち，Hiレベルの時間の割合</li>
+<h2 id="番号付きリスト">番号付きリスト</h2>
+<ol type="1">
+<li>入力Markdownを解析する</li>
+<li>Pandoc defaultsを適用する</li>
+<li>CSSとアウトライン用JSをHTMLへ埋め込む</li>
+<li>単体で移動可能なHTMLを生成する</li>
+</ol>
+<h2 id="タスクリスト">タスクリスト</h2>
+<ul class="task-list">
+<li><label><input type="checkbox"
+checked="" />HTMLを生成する</label></li>
+<li><label><input type="checkbox"
+checked="" />CSSを埋め込む</label></li>
+<li><label><input
+type="checkbox" />複数の画面幅で目視確認する</label></li>
 </ul>
-<h2 id="チャタリング">チャタリング</h2>
-<ul>
-<li>SWで発生する振動</li>
-<li>コンピュータは気づくので対策がいる</li>
-<li>ソフトウェア的：スイッチの判定の直後に短いタイマを挿入</li>
-<li>ハードウェア的：コンデンサや，論理ゲートIC</li>
-</ul>
-<h2 id="ノイズ対策">ノイズ対策</h2>
-<ul>
-<li>ADCの結果はノイズが入ってる可能性がある</li>
-</ul>
-<p><strong>フィルタリング</strong> -
-ハイパス：特定周波数より低い周波数をカット -
-ローパス：特定周波数より高い周波数をカット -
-バンドパス：特定の周波数範囲のみパス</p>
+<h1 id="引用と区切り">引用と区切り</h1>
+<h2 id="引用">引用</h2>
+<blockquote>
+<p>デザインシステムは見た目を統一するだけでなく、情報構造、操作方法、アクセシビリティを一貫させるために使用します。</p>
+<p>引用が複数段落でも、灰色の左罫線と適切な内側余白を維持します。</p>
+</blockquote>
+<h2 id="水平線">水平線</h2>
+<p>前の内容です。</p>
 <hr />
-<ul>
-<li>ハード的：RLCで作る</li>
-<li>ソフト的：離散フーリエ変換</li>
-</ul>
-<p><strong>コンパウンディング(コンプレッサ)</strong> -
-振幅の大小の差を縮め、例えば音であれば聞きやすさを向上する。</p>
-<p><strong>コンボリューション(畳み込み)</strong> -
-特定の特徴を弱めたり，強めたりすることができる．</p>
-<p><strong>ヒステリス特性</strong> -
-現在の入力と過去の入力を使って，出力を決める特性 -
-しきい値処理で細かい値で揺れる場合に有効 -
-シュミットトリガ：しきい値を2つ持つことによって，細かな入力電圧の変化による，出力結果の振動を防ぐことができる．
-- 例えば、HighになるときとLowになるときでしきい値を変える</p>
-<h3 id="精度">精度</h3>
-<ul>
-<li>高精度で測定したら良いこともあるが、ノイズもその分増えるので注意が必要となる。</li>
-</ul>
-<h1 id="開発環境">開発環境</h1>
-<ul>
-<li>基本的には非組込みのソフトと同じようなことはできることが多い
-<ul>
-<li>主に見るのは性能とメモリのバランス</li>
-<li>結果がわかりにくので、デバッガやエミュを活用する</li>
-</ul></li>
-<li>mapファイル解析：領域にどのようなデータが多いのかを確認できる</li>
-<li>コールグラフ：関数の呼び出し関係を図示する。
-<ul>
-<li>関数呼び出し回数が多いとスタックを消費</li>
-</ul></li>
-<li>性能プロファイリング：関数が実行されるのにかかる時間やメモリアクセスしている時間などを可視化</li>
-</ul>
-<h1 id="os">OS</h1>
-<ul>
-<li>汎用OS：IoTの実現、USBドライバの利用などで便利
-<ul>
-<li>ROS(ミドルウェア)：ライブラリや通信方式の定義</li>
-</ul></li>
-<li>RTOS：軽量かつリアルタイム性を保証
-<ul>
-<li>資源の抽象化や仮想化は不十分(タスクのみ抽象化してる)
-<ul>
-<li>プログラムサイズを小さくするため</li>
-</ul></li>
-<li>ハードウェア依存部については適宜移植する必要がある</li>
-<li>汎用OS型：応答時間は遅いが、機能が豊富-&gt;意識しなくていい部分が多い</li>
-<li>リアルタイムカーネル型：応答時間は早く、カーネルサイズは小さいが、機能は限定的</li>
-</ul></li>
-<li>コンテキスト：タスクが実行される環境
-<ul>
-<li>タスクコンテキスト：OSが管理するもの</li>
-<li>非タスクコンテキスト：割り込みなどOSの想定外のタイミングで実行される</li>
-</ul></li>
-<li>プリエンプトとディパッチ</li>
-</ul>
-<h2 id="近年の動向">近年の動向</h2>
-<ul>
-<li>組込みLinuxの需要が非常に大きい。</li>
-<li>ヘテロジニア構成など、リソースに潤沢になり、「楽に使う」用キュが増加</li>
-<li>コンテナ技術の需要も増加</li>
-<li>かといって、RTOSがなくなるわけでもない
-<ul>
-<li>レガシーの保守</li>
-<li>Linux+リアルタイム性とRTOSではまた性質が違う</li>
-</ul></li>
-</ul>
+<p>水平線の後の内容です。セクション見出しの代わりには使用しません。</p>
+<h1 id="コード">コード</h1>
+<h2 id="コードブロック">コードブロック</h2>
+<div class="sourceCode" id="cb1"><pre class="sourceCode go"><code class="sourceCode go"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="kw">package</span> main</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> <span class="st">&quot;fmt&quot;</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="kw">func</span> main<span class="op">()</span> <span class="op">{</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>    message <span class="op">:=</span> <span class="st">&quot;mkiln debug&quot;</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>    fmt<span class="op">.</span>Println<span class="op">(</span>message<span class="op">)</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+<h2 id="長いコード行">長いコード行</h2>
+<p>コードブロックだけが横スクロールし、ページ全体には横スクロールが発生しないことを確認します。</p>
+<pre class="text"><code>GET /api/v1/documents/example?include=metadata,sections,links,footnotes&amp;format=standalone-html&amp;style=default HTTP/1.1</code></pre>
+<h1 id="表">表</h1>
+<h2 id="基本テーブル">基本テーブル</h2>
+<table>
+<thead>
+<tr class="header">
+<th>項目</th>
+<th style="text-align: right;">既定値</th>
+<th>確認内容</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>本文</td>
+<td style="text-align: right;">16px / 1.7</td>
+<td>日本語の可読性と文字拡大</td>
+</tr>
+<tr class="even">
+<td>アウトライン</td>
+<td style="text-align: right;">256px</td>
+<td>左端固定と独立スクロール</td>
+</tr>
+<tr class="odd">
+<td>本文最大幅</td>
+<td style="text-align: right;">960px</td>
+<td>デスクトップでの可変幅</td>
+</tr>
+<tr class="even">
+<td>ブレークポイント</td>
+<td style="text-align: right;">1024px</td>
+<td>1カラムへの切り替え</td>
+</tr>
+</tbody>
+</table>
+<h2 id="内容量の多いテーブル">内容量の多いテーブル</h2>
+<table>
+<colgroup>
+<col style="width: 33%" />
+<col style="width: 33%" />
+<col style="width: 33%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>環境</th>
+<th>動作</th>
+<th>備考</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>モバイル</td>
+<td>アウトラインを本文上部へ配置</td>
+<td>横幅を圧迫せず、通常の文書順で読み上げる</td>
+</tr>
+<tr class="even">
+<td>デスクトップ</td>
+<td>アウトラインを画面左端へ固定</td>
+<td>現在の見出しを選択状態として表示する</td>
+</tr>
+<tr class="odd">
+<td>印刷</td>
+<td>固定配置を解除</td>
+<td>コード、引用、表の途中改ページを可能な範囲で避ける</td>
+</tr>
+</tbody>
+</table>
+<h1 id="数式">数式</h1>
+<h2 id="インライン数式">インライン数式</h2>
+<p>質量とエネルギーの関係は <span class="math inline">E = mc^2</span>
+です。インライン数式が本文の行高を不自然に崩さないことを確認します。</p>
+<h2 id="ディスプレイ数式">ディスプレイ数式</h2>
+<p><span class="math display">
+f(x) = \int_{-\infty}^{\infty} \hat{f}(\xi)e^{2\pi i x\xi}\,d\xi
+</span></p>
+<p>KaTeXで中央表示され、狭い画面でも内容へアクセスできることを確認します。</p>
+<h1 id="レスポンシブ確認">レスポンシブ確認</h1>
+<h2 id="モバイル幅">モバイル幅</h2>
+<p>ブラウザの開発者ツールで幅を768px未満へ変更します。本文には左右16pxの余白が残り、見出し、表、コードがビューポート外へ本文全体を押し出さないことを確認します。</p>
+<h2 id="タブレット幅">タブレット幅</h2>
+<p>768pxから1023pxでは1カラムを維持し、本文幅は最大48remです。アウトラインは本文上部のカードとして表示されます。</p>
+<h2 id="デスクトップ幅">デスクトップ幅</h2>
+<p>1024px以上ではアウトラインが画面左端へ固定され、本文領域は画面幅に応じて最大960pxまで広がります。</p>
+<h2 id="文字拡大">文字拡大</h2>
+<p>ブラウザを200%へ拡大します。実効ビューポートが狭くなるため1カラムへ切り替わり、情報の欠落や重なりが発生しないことを確認します。</p>
+<h1 id="アウトライン追従">アウトライン追従</h1>
+<h2 id="スクロール位置の検出">スクロール位置の検出</h2>
+<p>ページを上下へスクロールすると、現在位置の直前にある見出しが選択されます。高速スクロール時にも複数の更新処理が重複しないよう、<code>requestAnimationFrame</code>で調整しています。</p>
+<h2 id="キーボード操作">キーボード操作</h2>
+<p>Tabキーでアウトライン内のリンクへ移動し、Enterキーで対応する見出しへ移動します。フォーカス表示と現在位置表示が色だけに依存せず、太字とアウトラインでも区別できることを確認します。</p>
+<h2 id="最終セクション">最終セクション</h2>
+<p>ページ末尾までスクロールしたとき、この項目が選択状態になります。ここまで確認できれば、アウトラインの長さ、独立スクロール、現在位置表示の基本動作をまとめて検証できます。</p>
+<section id="footnotes" class="footnotes footnotes-end-of-document"
+role="doc-endnotes">
+<hr />
+<ol>
+<li id="fn1"><p>Markdownの解析とHTML生成はPandocへ委譲しています。<a
+href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+</ol>
+</section>
 </body>
 </html>
