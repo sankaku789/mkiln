@@ -5,6 +5,7 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
+	"strings"
 )
 
 type HTMLBuild struct {
@@ -15,14 +16,24 @@ type HTMLBuild struct {
 }
 
 type TypstBuild struct {
-	Input  string
-	Output string
+	Input        string
+	Output       string
+	PDFOutput    string
+	TemplatePath string
 }
 
 func findPandoc() (string, error) {
 	path, err := exec.LookPath("pandoc")
 	if err != nil {
 		return "", fmt.Errorf("pandoc not found; run `mkiln setup`")
+	}
+	return path, nil
+}
+
+func findTypst() (string, error) {
+	path, err := exec.LookPath("typst")
+	if err != nil {
+		return "", fmt.Errorf("typst not found; install Typst to use `mkiln --typst`")
 	}
 	return path, nil
 }
@@ -100,15 +111,28 @@ func resolveTypst(opts Options) (TypstBuild, error) {
 	if opts.Style != "" {
 		return TypstBuild{}, fmt.Errorf("style cannot be used with Typst conversion")
 	}
-	return TypstBuild{opts.Input, resolveOutput(opts.Input, opts.Output, true)}, nil
+	output := resolveOutput(opts.Input, opts.Output, true)
+	if filepath.Ext(output) != ".typ" {
+		return TypstBuild{}, fmt.Errorf("Typst output must use the .typ extension: %q", output)
+	}
+	template, err := resolveTypstTemplate()
+	if err != nil {
+		return TypstBuild{}, err
+	}
+	pdfOutput := strings.TrimSuffix(output, filepath.Ext(output)) + ".pdf"
+	return TypstBuild{opts.Input, output, pdfOutput, template}, nil
 }
 
 func typstPandocArgs(b TypstBuild) []string {
-	return []string{b.Input, "-t", "typst", "-o", b.Output}
+	return []string{b.Input, "-t", "typst", "--standalone", "--template", b.TemplatePath, "-o", b.Output}
 }
 
 func runTypstPandoc(pandocPath string, b TypstBuild) error {
 	return runCommand(pandocPath, typstPandocArgs(b))
+}
+
+func runTypstCompile(typstPath string, b TypstBuild) error {
+	return runCommand(typstPath, []string{"compile", b.Output, b.PDFOutput})
 }
 
 func runCommand(name string, args []string) error {

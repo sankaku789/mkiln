@@ -28,6 +28,30 @@ func ensureUserConfig() error {
 	return writeEmbeddedFile("assets/default.css", filepath.Join(dir, "styles", "default.css"))
 }
 
+func ensureTypstTemplate() error {
+	dir, err := configDir()
+	if err != nil {
+		return err
+	}
+	templatesDir := filepath.Join(dir, "templates")
+	if err := os.MkdirAll(templatesDir, 0o755); err != nil {
+		return fmt.Errorf("create template directory: %w", err)
+	}
+	return writeEmbeddedFile("assets/default.typ", filepath.Join(templatesDir, "default.typ"))
+}
+
+func resolveTypstTemplate() (string, error) {
+	dir, err := configDir()
+	if err != nil {
+		return "", err
+	}
+	path := filepath.Join(dir, "templates", "default.typ")
+	if _, err := os.Stat(path); err != nil {
+		return "", fmt.Errorf("Typst template %q: %w", path, err)
+	}
+	return path, nil
+}
+
 func writeEmbeddedFile(src, dst string) error {
 	data, err := assets.ReadFile(src)
 	if err != nil {

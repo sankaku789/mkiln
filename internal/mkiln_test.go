@@ -41,10 +41,17 @@ func TestPandocArgsRemainSeparate(t *testing.T) {
 	if got := htmlPandocArgs(html, "style.html"); !reflect.DeepEqual(got, wantHTML) {
 		t.Fatalf("htmlPandocArgs() = %q, want %q", got, wantHTML)
 	}
-	typst := TypstBuild{"note.md", "note.typ"}
-	wantTypst := []string{"note.md", "-t", "typst", "-o", "note.typ"}
+	typst := TypstBuild{"note.md", "note.typ", "note.pdf", "default.typ"}
+	wantTypst := []string{"note.md", "-t", "typst", "--standalone", "--template", "default.typ", "-o", "note.typ"}
 	if got := typstPandocArgs(typst); !reflect.DeepEqual(got, wantTypst) {
 		t.Fatalf("typstPandocArgs() = %q, want %q", got, wantTypst)
+	}
+}
+
+func TestResolveTypstRejectsNonTypOutput(t *testing.T) {
+	_, err := resolveTypst(Options{Input: "note.md", Output: "note.pdf", Typst: true})
+	if err == nil || !strings.Contains(err.Error(), ".typ") {
+		t.Fatalf("resolveTypst() error = %v, want .typ extension error", err)
 	}
 }
 
@@ -73,7 +80,7 @@ func TestEnsureUserConfigDoesNotOverwrite(t *testing.T) {
 	}
 }
 
-func TestRunTypstDoesNotCreateConfig(t *testing.T) {
+func TestRunTypstCreatesTemplateConfig(t *testing.T) {
 	root := t.TempDir()
 	configHome := filepath.Join(root, "config")
 	binDir := filepath.Join(root, "bin")
@@ -82,6 +89,10 @@ func TestRunTypstDoesNotCreateConfig(t *testing.T) {
 	}
 	pandoc := filepath.Join(binDir, "pandoc")
 	if err := os.WriteFile(pandoc, []byte("#!/bin/sh\nexit 0\n"), 0o755); err != nil {
+		t.Fatal(err)
+	}
+	typst := filepath.Join(binDir, "typst")
+	if err := os.WriteFile(typst, []byte("#!/bin/sh\nexit 0\n"), 0o755); err != nil {
 		t.Fatal(err)
 	}
 	input := filepath.Join(root, "note.md")
@@ -94,8 +105,9 @@ func TestRunTypstDoesNotCreateConfig(t *testing.T) {
 	if code := Run([]string{input, "--typst"}, "test", &stdout, &stderr); code != 0 {
 		t.Fatalf("Run() = %d, stderr = %q", code, stderr.String())
 	}
-	if _, err := os.Stat(filepath.Join(configHome, "mkiln")); !os.IsNotExist(err) {
-		t.Fatalf("Typst conversion created config directory: %v", err)
+	template := filepath.Join(configHome, "mkiln", "templates", "default.typ")
+	if _, err := os.Stat(template); err != nil {
+		t.Fatalf("Typst template was not created: %v", err)
 	}
 }
 

@@ -34,9 +34,21 @@ func Run(args []string, version string, stdout, stderr io.Writer) int {
 		return 1
 	}
 	if opts.Typst {
+		if err := ensureTypstTemplate(); err != nil {
+			fmt.Fprintln(stderr, err)
+			return 1
+		}
+		typst, err := findTypst()
+		if err != nil {
+			fmt.Fprintln(stderr, err)
+			return 1
+		}
 		build, err := resolveTypst(opts)
 		if err == nil {
 			err = runTypstPandoc(pandoc, build)
+		}
+		if err == nil {
+			err = runTypstCompile(typst, build)
 		}
 		if err != nil {
 			fmt.Fprintln(stderr, err)

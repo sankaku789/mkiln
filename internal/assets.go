@@ -2,5 +2,5 @@ package mkiln
 
 import "embed"
 
-//go:embed assets/default.yaml assets/default.css assets/outline.js
+//go:embed assets/default.yaml assets/default.css assets/default.typ assets/outline.js
 var assets embed.FS

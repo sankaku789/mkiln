@@ -76,7 +76,7 @@ const usage = `Usage:
 Options:
   -o, --output PATH  output path
   -s, --style NAME   HTML CSS style
-  -t, --typst        convert to plain Typst source
+  -t, --typst        generate templated Typst source and PDF
   -h, --help         show help
   -V, --version      show version
 `
