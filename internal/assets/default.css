@@ -1,0 +1,15 @@
+:root {
+  color-scheme: light dark;
+  font-family: system-ui, sans-serif;
+  line-height: 1.65;
+}
+
+body {
+  max-width: 52rem;
+  margin: 0 auto;
+  padding: 2rem 1.25rem 4rem;
+}
+
+img, svg { max-width: 100%; }
+pre { overflow-x: auto; padding: 1rem; }
+code, pre { font-family: ui-monospace, monospace; }
