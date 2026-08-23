@@ -38,6 +38,8 @@ Pandocがない場合は`setup`コマンドでPandocをインストールでき�
 mkiln setup
 ```
 
+なお、インストールには、winget、apt、pacman等OSのデフォルトパッケージマネージャーを使用します。
+
 ### 変換
 
 ```bash
