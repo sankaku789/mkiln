@@ -1,7 +1,7 @@
 # Project Overview
 
 ## 目的
-mkiln is a thin Go CLI around Pandoc. Its primary path converts Markdown with LaTeX math to standalone HTML using Pandoc defaults, CSS, and KaTeX. `--typst` emits plain Typst source; `--pdf` emits DSDocTemplate-based Typst source and compiles a sibling PDF.
+mkiln is a thin Go CLI around Pandoc. Its primary path converts Markdown with LaTeX math to standalone HTML using Pandoc defaults, CSS, and native MathML. `--typst` emits plain Typst source; `--pdf` emits DSDocTemplate-based Typst source and compiles a sibling PDF.
 
 ## 技術スタック
 - Go 1.24.4, standard library only.
@@ -27,6 +27,7 @@ mkiln is a thin Go CLI around Pandoc. Its primary path converts Markdown with La
 - HTML and Typst remain separate concrete flows. Typst never reads or creates mkiln HTML config.
 - Pandoc owns Markdown/YAML/rendering behavior; no parser dependencies.
 - Existing config is never overwritten. Setup never invokes sudo.
+- HTML math uses native MathML without a CDN or bundled renderer assets; plain Typst is independent. `outline.js` remains an intentional UX enhancement.
 - Assets live at `internal/assets`, not root `assets`, because Go embed patterns cannot traverse from `internal/assets.go` to a parent directory.
 
 See `mem:core` for the memory graph and durable invariants.

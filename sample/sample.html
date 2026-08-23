@@ -790,24 +790,6 @@
   });
 
   </script>
-  <script defer=""
-  src="https://cdn.jsdelivr.net/npm/katex@0.18.4/dist/katex.min.js"></script>
-  <script>document.addEventListener("DOMContentLoaded", function () {
- var mathElements = document.getElementsByClassName("math");
- var macros = [];
- for (var i = 0; i < mathElements.length; i++) {
-  var texText = mathElements[i].firstChild;
-  if (mathElements[i].tagName == "SPAN") {
-   katex.render(texText.data, mathElements[i], {
-    displayMode: mathElements[i].classList.contains('display'),
-    throwOnError: false,
-    macros: macros,
-    fleqn: false
-   });
-}}});
-  </script>
-  <link rel="stylesheet"
-  href="https://cdn.jsdelivr.net/npm/katex@0.18.4/dist/katex.min.css" />
 </head>
 <body>
 <header id="title-block-header">
@@ -1032,12 +1014,13 @@ type="checkbox" />複数の画面幅で目視確認する</label></li>
 </table>
 <h1 id="数式">数式</h1>
 <h2 id="インライン数式">インライン数式</h2>
-<p>質量とエネルギーの関係は <span class="math inline">E = mc^2</span>
+<p>質量とエネルギーの関係は
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>E</mi><mo>=</mo><mi>m</mi><msup><mi>c</mi><mn>2</mn></msup></mrow><annotation encoding="application/x-tex">E = mc^2</annotation></semantics></math>
 です。インライン数式が本文の行高を不自然に崩さないことを確認します。</p>
 <h2 id="ディスプレイ数式">ディスプレイ数式</h2>
-<p><span class="math display">
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>f</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>x</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>=</mo><msubsup><mo>∫</mo><mrow><mi>−</mi><mi>∞</mi></mrow><mi>∞</mi></msubsup><mover><mi>f</mi><mo accent="true">̂</mo></mover><mrow><mo stretchy="true" form="prefix">(</mo><mi>ξ</mi><mo stretchy="true" form="postfix">)</mo></mrow><msup><mi>e</mi><mrow><mn>2</mn><mi>π</mi><mi>i</mi><mi>x</mi><mi>ξ</mi></mrow></msup><mspace width="0.167em"></mspace><mi>d</mi><mi>ξ</mi></mrow><annotation encoding="application/x-tex">
 f(x) = \int_{-\infty}^{\infty} \hat{f}(\xi)e^{2\pi i x\xi}\,d\xi
-</span></p>
+</annotation></semantics></math></p>
 <p>KaTeXで中央表示され、狭い画面でも内容へアクセスできることを確認します。</p>
 <h1 id="レスポンシブ確認">レスポンシブ確認</h1>
 <h2 id="モバイル幅">モバイル幅</h2>

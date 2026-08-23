@@ -64,6 +64,19 @@ func TestPandocArgsRemainSeparate(t *testing.T) {
 	}
 }
 
+func TestEmbeddedHTMLDefaultsUseMathML(t *testing.T) {
+	defaults, err := assets.ReadFile("assets/default.yaml")
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !strings.Contains(string(defaults), "method: mathml") {
+		t.Fatalf("default.yaml does not use MathML: %q", defaults)
+	}
+	if strings.Contains(string(defaults), "katex") || strings.Contains(string(defaults), "embed-resources") {
+		t.Fatalf("default.yaml retains KaTeX resource configuration: %q", defaults)
+	}
+}
+
 func TestResolveTypstRejectsNonTypOutput(t *testing.T) {
 	_, err := resolveTypst(Options{Input: "note.md", Output: "note.pdf", Typst: true})
 	if err == nil || !strings.Contains(err.Error(), ".typ") {

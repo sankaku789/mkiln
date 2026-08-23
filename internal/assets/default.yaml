@@ -5,5 +5,4 @@ toc: true
 toc-depth: 3
 
 html-math-method:
-  method: katex
-  url: https://cdn.jsdelivr.net/npm/katex@0.18.4/dist/
+  method: mathml
