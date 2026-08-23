@@ -16,6 +16,11 @@ type HTMLBuild struct {
 }
 
 type TypstBuild struct {
+	Input  string
+	Output string
+}
+
+type PDFBuild struct {
 	Input        string
 	Output       string
 	PDFOutput    string
@@ -33,7 +38,7 @@ func findPandoc() (string, error) {
 func findTypst() (string, error) {
 	path, err := exec.LookPath("typst")
 	if err != nil {
-		return "", fmt.Errorf("typst not found; install Typst to use `mkiln --typst`")
+		return "", fmt.Errorf("typst not found; install Typst to use `mkiln --pdf`")
 	}
 	return path, nil
 }
@@ -115,15 +120,30 @@ func resolveTypst(opts Options) (TypstBuild, error) {
 	if filepath.Ext(output) != ".typ" {
 		return TypstBuild{}, fmt.Errorf("Typst output must use the .typ extension: %q", output)
 	}
+	return TypstBuild{opts.Input, output}, nil
+}
+
+func resolvePDF(opts Options) (PDFBuild, error) {
+	if opts.Style != "" {
+		return PDFBuild{}, fmt.Errorf("style cannot be used with PDF conversion")
+	}
+	output := resolveOutput(opts.Input, opts.Output, true)
+	if filepath.Ext(output) != ".typ" {
+		return PDFBuild{}, fmt.Errorf("PDF source output must use the .typ extension: %q", output)
+	}
 	template, err := resolveTypstTemplate()
 	if err != nil {
-		return TypstBuild{}, err
+		return PDFBuild{}, err
 	}
 	pdfOutput := strings.TrimSuffix(output, filepath.Ext(output)) + ".pdf"
-	return TypstBuild{opts.Input, output, pdfOutput, template}, nil
+	return PDFBuild{opts.Input, output, pdfOutput, template}, nil
 }
 
 func typstPandocArgs(b TypstBuild) []string {
+	return []string{b.Input, "-t", "typst", "-o", b.Output}
+}
+
+func pdfPandocArgs(b PDFBuild) []string {
 	return []string{b.Input, "-t", "typst", "--standalone", "--template", b.TemplatePath, "-o", b.Output}
 }
 
@@ -131,7 +151,11 @@ func runTypstPandoc(pandocPath string, b TypstBuild) error {
 	return runCommand(pandocPath, typstPandocArgs(b))
 }
 
-func runTypstCompile(typstPath string, b TypstBuild) error {
+func runPDFPandoc(pandocPath string, b PDFBuild) error {
+	return runCommand(pandocPath, pdfPandocArgs(b))
+}
+
+func runTypstCompile(typstPath string, b PDFBuild) error {
 	return runCommand(typstPath, []string{"compile", b.Output, b.PDFOutput})
 }
 

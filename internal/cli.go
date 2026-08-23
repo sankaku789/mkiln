@@ -12,6 +12,7 @@ type Options struct {
 	Output string
 	Style  string
 	Typst  bool
+	PDF    bool
 }
 
 var (
@@ -31,6 +32,8 @@ func parseArgs(args []string) (Options, error) {
 			return Options{}, errVersion
 		case "-t", "--typst":
 			opts.Typst = true
+		case "-p", "--pdf":
+			opts.PDF = true
 		case "-o", "--output", "-s", "--style":
 			if i+1 >= len(args) {
 				return Options{}, fmt.Errorf("option %s requires a value", arg)
@@ -57,8 +60,11 @@ func parseArgs(args []string) (Options, error) {
 		return Options{}, fmt.Errorf("expected exactly one input file")
 	}
 	opts.Input = inputs[0]
-	if opts.Typst && opts.Style != "" {
-		return Options{}, fmt.Errorf("style cannot be used with Typst conversion")
+	if opts.Typst && opts.PDF {
+		return Options{}, fmt.Errorf("--typst and --pdf cannot be used together")
+	}
+	if (opts.Typst || opts.PDF) && opts.Style != "" {
+		return Options{}, fmt.Errorf("style can only be used with HTML conversion")
 	}
 	if info, err := os.Stat(opts.Input); err != nil {
 		return Options{}, fmt.Errorf("input %q: %w", opts.Input, err)
@@ -71,12 +77,14 @@ func parseArgs(args []string) (Options, error) {
 const usage = `Usage:
   mkiln FILE [-o PATH] [-s NAME]
   mkiln FILE --typst [-o PATH]
+  mkiln FILE --pdf [-o PATH]
   mkiln setup
 
 Options:
   -o, --output PATH  output path
   -s, --style NAME   HTML CSS style
-  -t, --typst        generate templated Typst source and PDF
+  -t, --typst        generate plain Typst source
+  -p, --pdf          generate templated Typst source and PDF
   -h, --help         show help
   -V, --version      show version
 `

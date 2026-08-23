@@ -35,16 +35,32 @@ func TestParseArgsRejectsTypstStyle(t *testing.T) {
 	}
 }
 
+func TestParseArgsRejectsTypstAndPDF(t *testing.T) {
+	input := filepath.Join(t.TempDir(), "note.md")
+	if err := os.WriteFile(input, nil, 0o644); err != nil {
+		t.Fatal(err)
+	}
+	_, err := parseArgs([]string{input, "--typst", "--pdf"})
+	if err == nil || !strings.Contains(err.Error(), "cannot be used together") {
+		t.Fatalf("parseArgs() error = %v, want mutual exclusion error", err)
+	}
+}
+
 func TestPandocArgsRemainSeparate(t *testing.T) {
 	html := HTMLBuild{"note.md", "note.html", "default.yaml", "default.css"}
 	wantHTML := []string{"note.md", "--defaults", "default.yaml", "--include-in-header", "style.html", "-o", "note.html"}
 	if got := htmlPandocArgs(html, "style.html"); !reflect.DeepEqual(got, wantHTML) {
 		t.Fatalf("htmlPandocArgs() = %q, want %q", got, wantHTML)
 	}
-	typst := TypstBuild{"note.md", "note.typ", "note.pdf", "default.typ"}
-	wantTypst := []string{"note.md", "-t", "typst", "--standalone", "--template", "default.typ", "-o", "note.typ"}
+	typst := TypstBuild{"note.md", "note.typ"}
+	wantTypst := []string{"note.md", "-t", "typst", "-o", "note.typ"}
 	if got := typstPandocArgs(typst); !reflect.DeepEqual(got, wantTypst) {
 		t.Fatalf("typstPandocArgs() = %q, want %q", got, wantTypst)
+	}
+	pdf := PDFBuild{"note.md", "note.typ", "note.pdf", "default.typ"}
+	wantPDF := []string{"note.md", "-t", "typst", "--standalone", "--template", "default.typ", "-o", "note.typ"}
+	if got := pdfPandocArgs(pdf); !reflect.DeepEqual(got, wantPDF) {
+		t.Fatalf("pdfPandocArgs() = %q, want %q", got, wantPDF)
 	}
 }
 
@@ -80,7 +96,7 @@ func TestEnsureUserConfigDoesNotOverwrite(t *testing.T) {
 	}
 }
 
-func TestRunTypstCreatesTemplateConfig(t *testing.T) {
+func TestRunTypstDoesNotCreateConfig(t *testing.T) {
 	root := t.TempDir()
 	configHome := filepath.Join(root, "config")
 	binDir := filepath.Join(root, "bin")
@@ -89,10 +105,6 @@ func TestRunTypstCreatesTemplateConfig(t *testing.T) {
 	}
 	pandoc := filepath.Join(binDir, "pandoc")
 	if err := os.WriteFile(pandoc, []byte("#!/bin/sh\nexit 0\n"), 0o755); err != nil {
-		t.Fatal(err)
-	}
-	typst := filepath.Join(binDir, "typst")
-	if err := os.WriteFile(typst, []byte("#!/bin/sh\nexit 0\n"), 0o755); err != nil {
 		t.Fatal(err)
 	}
 	input := filepath.Join(root, "note.md")
@@ -105,9 +117,36 @@ func TestRunTypstCreatesTemplateConfig(t *testing.T) {
 	if code := Run([]string{input, "--typst"}, "test", &stdout, &stderr); code != 0 {
 		t.Fatalf("Run() = %d, stderr = %q", code, stderr.String())
 	}
+	if _, err := os.Stat(filepath.Join(configHome, "mkiln")); !os.IsNotExist(err) {
+		t.Fatalf("Typst conversion created config directory: %v", err)
+	}
+}
+
+func TestRunPDFCreatesTemplateConfig(t *testing.T) {
+	root := t.TempDir()
+	configHome := filepath.Join(root, "config")
+	binDir := filepath.Join(root, "bin")
+	if err := os.Mkdir(binDir, 0o755); err != nil {
+		t.Fatal(err)
+	}
+	for _, name := range []string{"pandoc", "typst"} {
+		if err := os.WriteFile(filepath.Join(binDir, name), []byte("#!/bin/sh\nexit 0\n"), 0o755); err != nil {
+			t.Fatal(err)
+		}
+	}
+	input := filepath.Join(root, "note.md")
+	if err := os.WriteFile(input, nil, 0o644); err != nil {
+		t.Fatal(err)
+	}
+	t.Setenv("PATH", binDir)
+	t.Setenv("XDG_CONFIG_HOME", configHome)
+	var stdout, stderr bytes.Buffer
+	if code := Run([]string{input, "--pdf"}, "test", &stdout, &stderr); code != 0 {
+		t.Fatalf("Run() = %d, stderr = %q", code, stderr.String())
+	}
 	template := filepath.Join(configHome, "mkiln", "templates", "default.typ")
 	if _, err := os.Stat(template); err != nil {
-		t.Fatalf("Typst template was not created: %v", err)
+		t.Fatalf("PDF template was not created: %v", err)
 	}
 }
 

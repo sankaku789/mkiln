@@ -34,6 +34,17 @@ func Run(args []string, version string, stdout, stderr io.Writer) int {
 		return 1
 	}
 	if opts.Typst {
+		build, err := resolveTypst(opts)
+		if err == nil {
+			err = runTypstPandoc(pandoc, build)
+		}
+		if err != nil {
+			fmt.Fprintln(stderr, err)
+			return 1
+		}
+		return 0
+	}
+	if opts.PDF {
 		if err := ensureTypstTemplate(); err != nil {
 			fmt.Fprintln(stderr, err)
 			return 1
@@ -43,9 +54,9 @@ func Run(args []string, version string, stdout, stderr io.Writer) int {
 			fmt.Fprintln(stderr, err)
 			return 1
 		}
-		build, err := resolveTypst(opts)
+		build, err := resolvePDF(opts)
 		if err == nil {
-			err = runTypstPandoc(pandoc, build)
+			err = runPDFPandoc(pandoc, build)
 		}
 		if err == nil {
 			err = runTypstCompile(typst, build)

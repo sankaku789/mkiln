@@ -1,0 +1,18 @@
+# Build outputs
+/mkiln
+*.exe
+
+# Generated debug documents
+/exam2.html
+/exam2.pdf
+/exam2.typ
+/output.pdf
+
+# Visual review artifacts
+/exam2-*-viewport.png
+/exam2-desktop.png
+/exam2-mobile.png
+/pdf-review/
+
+# Tool output
+/test-results/
