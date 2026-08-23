@@ -122,31 +122,14 @@ func TestRunTypstDoesNotCreateConfig(t *testing.T) {
 	}
 }
 
-func TestRunPDFCreatesTemplateConfig(t *testing.T) {
-	root := t.TempDir()
-	configHome := filepath.Join(root, "config")
-	binDir := filepath.Join(root, "bin")
-	if err := os.Mkdir(binDir, 0o755); err != nil {
-		t.Fatal(err)
-	}
-	for _, name := range []string{"pandoc", "typst"} {
-		if err := os.WriteFile(filepath.Join(binDir, name), []byte("#!/bin/sh\nexit 0\n"), 0o755); err != nil {
-			t.Fatal(err)
-		}
-	}
-	input := filepath.Join(root, "note.md")
+func TestParseArgsRejectsDisabledPDF(t *testing.T) {
+	input := filepath.Join(t.TempDir(), "note.md")
 	if err := os.WriteFile(input, nil, 0o644); err != nil {
 		t.Fatal(err)
 	}
-	t.Setenv("PATH", binDir)
-	t.Setenv("XDG_CONFIG_HOME", configHome)
-	var stdout, stderr bytes.Buffer
-	if code := Run([]string{input, "--pdf"}, "test", &stdout, &stderr); code != 0 {
-		t.Fatalf("Run() = %d, stderr = %q", code, stderr.String())
-	}
-	template := filepath.Join(configHome, "mkiln", "templates", "default.typ")
-	if _, err := os.Stat(template); err != nil {
-		t.Fatalf("PDF template was not created: %v", err)
+	_, err := parseArgs([]string{input, "--pdf"})
+	if err == nil || !strings.Contains(err.Error(), "currently disabled") {
+		t.Fatalf("parseArgs() error = %v, want disabled error", err)
 	}
 }
 

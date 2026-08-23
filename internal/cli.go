@@ -63,6 +63,9 @@ func parseArgs(args []string) (Options, error) {
 	if opts.Typst && opts.PDF {
 		return Options{}, fmt.Errorf("--typst and --pdf cannot be used together")
 	}
+	if opts.PDF {
+		return Options{}, fmt.Errorf("--pdf is currently disabled")
+	}
 	if (opts.Typst || opts.PDF) && opts.Style != "" {
 		return Options{}, fmt.Errorf("style can only be used with HTML conversion")
 	}
@@ -84,7 +87,7 @@ Options:
   -o, --output PATH  output path
   -s, --style NAME   HTML CSS style
   -t, --typst        generate plain Typst source
-  -p, --pdf          generate templated Typst source and PDF
+  -p, --pdf          currently disabled
   -h, --help         show help
   -V, --version      show version
 `
