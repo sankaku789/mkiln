@@ -1,4 +1,12 @@
+/*
+ * DADS-derived document rules adapted from the Digital Agency Design System
+ * example components HTML. Source paths are noted at each adapted section.
+ * Copyright (c) 2025 Digital Agency, Government of Japan. MIT License.
+ * See THIRD_PARTY_NOTICES in the mkiln distribution.
+ */
+
 :root {
+  /* Source: design-system-example-components-html/src/global.css */
   color-scheme: light;
   --color-primary: #0017c1;
   --color-primary-hover: #00118f;
@@ -9,14 +17,16 @@
   --color-background: #ffffff;
   --color-surface: #f2f2f2;
   --color-border: #949494;
-  --color-link-visited: #5c10be;
+  --color-link-visited: #5109ad;
+  --color-link-active: #c74700;
   --color-focus: #ffd43d;
-  --font-sans: "Noto Sans CJK JP", "Noto Sans JP", "Yu Gothic", "Meiryo", sans-serif;
-  --font-mono: "Noto Sans Mono CJK JP", "Noto Sans Mono", monospace;
+  --font-sans: "Noto Sans JP", -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-mono: "Noto Sans Mono", monospace;
   font-family: var(--font-sans);
   font-size: 100%;
   line-height: 1.7;
-  overflow-wrap: break-word;
+  overflow-wrap: anywhere;
+  line-break: strict;
   background: var(--color-background);
   color: var(--color-text);
 }
@@ -39,6 +49,7 @@ body {
   box-sizing: inherit;
 }
 
+/* Source: design-system-example-components-html/.storybook/prose.css */
 h1,
 h2,
 h3,
@@ -117,7 +128,8 @@ dd {
   margin-block-end: 1rem;
 }
 
-a {
+/* Source: design-system-example-components-html/src/components/link/link.css */
+a:any-link {
   color: var(--color-primary);
   text-decoration: underline;
   text-decoration-thickness: 1px;
@@ -128,26 +140,37 @@ a:visited {
   color: var(--color-link-visited);
 }
 
-a:hover {
-  color: var(--color-primary-hover);
-  text-decoration-thickness: 2px;
+@media (hover: hover) {
+  a:hover {
+    color: var(--color-primary);
+    text-decoration-thickness: 3px;
+  }
 }
 
-:where(a, button, input, select, textarea, summary):focus-visible {
-  color: var(--color-text);
-  background: var(--color-focus);
+a:active {
+  color: var(--color-link-active);
+  text-decoration-thickness: 1px;
+}
+
+/* Source: design-system-example-components-html/src/global.css */
+:focus-visible {
   border-radius: 4px;
-  outline: 2px solid #000000;
+  outline: 4px solid #000000;
   outline-offset: 2px;
-  text-decoration: none;
+  box-shadow: 0 0 0 2px var(--color-focus);
 }
 
+/* Source: design-system-example-components-html/src/components/blockquote/blockquote.css */
 blockquote {
   margin-inline: 0;
   padding: 0.5rem 1rem 0.5rem 1.5rem;
   border-inline-start: 8px solid #767676;
   background: transparent;
   color: var(--color-text);
+}
+
+blockquote > :first-child {
+  margin-block-start: 0;
 }
 
 blockquote > :last-child {
@@ -216,8 +239,10 @@ hr {
   border-top: 1px solid var(--color-border);
 }
 
+/* Source: design-system-example-components-html/src/components/image/image.css */
 figure {
   margin-inline: 0;
+  width: fit-content;
 }
 
 img,
@@ -229,12 +254,15 @@ video {
 }
 
 figcaption {
-  margin-block-start: 0.5rem;
-  color: var(--color-text-muted);
+  margin: 0.5rem 0 0;
+  contain: inline-size;
+  padding: 0.5rem 1.5rem;
+  color: var(--color-heading);
   font-size: 0.875rem;
   line-height: 1.5;
 }
 
+/* Source: design-system-example-components-html/.storybook/prose.css */
 table {
   width: 100%;
   border-collapse: collapse;
@@ -264,6 +292,23 @@ caption {
   text-align: start;
 }
 
+/* Source: design-system-example-components-html/.storybook/prose.css */
+details {
+  margin-block: 0 1.5rem;
+  padding: 1rem;
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+}
+
+summary {
+  font-weight: 700;
+  cursor: pointer;
+}
+
+details[open] > summary {
+  margin-block-end: 1rem;
+}
+
 input,
 button,
 select,
@@ -276,6 +321,7 @@ textarea {
   color: var(--color-text);
 }
 
+/* Source: design-system-example-components-html/src/components/toc/toc.css */
 #TOC {
   margin: 0;
   padding: 0;
@@ -292,7 +338,7 @@ textarea {
   z-index: 2;
   inset-block-start: 100%;
   inset-inline: 0;
-  display: none;
+  display: block;
   max-height: min(60vh, 32rem);
   margin: 0;
   padding: 1rem;
@@ -305,6 +351,14 @@ textarea {
 }
 
 #TOC.is-open > ul {
+  display: block;
+}
+
+.mobile-doc-header #TOC > ul {
+  display: none;
+}
+
+.mobile-doc-header #TOC.is-open > ul {
   display: block;
 }
 
@@ -364,6 +418,16 @@ textarea {
 #TOC ul ul {
   margin-block-start: 0.25rem;
   padding-inline-start: 1rem;
+  list-style: disc;
+  font-weight: 400;
+}
+
+#TOC ul ul ul {
+  list-style: circle;
+}
+
+#TOC > ul > li > a {
+  font-weight: 700;
 }
 
 #TOC li + li {
@@ -392,6 +456,7 @@ textarea {
   font-weight: 700;
 }
 
+/* mkiln screen layout and outline.js hooks. */
 @media (min-width: 64rem) {
   body {
     width: min(100% - 2rem, 79rem);
@@ -425,6 +490,10 @@ textarea {
     overflow: visible;
     border: 0;
     box-shadow: none;
+  }
+
+  .mobile-doc-header #TOC > ul {
+    display: block;
   }
 
   .toc-toggle {
@@ -469,20 +538,74 @@ textarea {
   }
 }
 
+/* mkiln browser print profile. */
 @media print {
+  #TOC,
+  .toc-toggle,
+  .mobile-doc-header {
+    display: none !important;
+  }
+
+  html,
   body {
+    max-width: none;
     width: auto;
+    margin: 0;
     padding: 0;
+    background: #ffffff;
+    color: #000000;
   }
 
   a {
     color: inherit;
   }
 
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    break-after: avoid-page;
+  }
+
+  p,
+  li {
+    orphans: 3;
+    widows: 3;
+  }
+
+  figure,
   pre,
-  blockquote,
-  table,
-  img {
+  blockquote {
+    break-inside: avoid-page;
+  }
+
+  table {
+    break-inside: auto;
+  }
+
+  thead {
+    display: table-header-group;
+  }
+
+  tr {
     break-inside: avoid;
   }
+
+  img,
+  svg {
+    max-width: 100%;
+    height: auto;
+  }
+
+  pre,
+  pre code {
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+  }
+}
+
+@page {
+  margin: 18mm 16mm 20mm;
 }

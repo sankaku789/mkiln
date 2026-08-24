@@ -40,6 +40,8 @@ go build ./cmd/mkiln
 mkiln setup
 ```
 
+安装时会使用操作系统默认的包管理器，例如 winget、apt 或 pacman。
+
 ### 转换
 
 ```bash
@@ -85,7 +87,7 @@ go build ./cmd/mkiln
 
 ## 参考
 
-CSS 布局参考了[日本数字厅设计系统](https://design.digital.go.jp/dads/)及其[实现](https://github.com/digital-go-jp/design-system-example-components-html)。
+CSS 布局参考了[日本数字厅设计系统](https://design.digital.go.jp/dads/)，并复用了其[示例实现](https://github.com/digital-go-jp/design-system-example-components-html)中的部分组件。
 
 ## 许可证
 

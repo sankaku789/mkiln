@@ -40,6 +40,8 @@ If Pandoc is not installed, you can install it with the `setup` command.
 mkiln setup
 ```
 
+Installation uses the operating system's default package manager, such as winget, apt, or pacman.
+
 ### Conversion
 
 ```bash
@@ -85,7 +87,7 @@ go build ./cmd/mkiln
 
 ## References
 
-The CSS layout was created with reference to the [Digital Agency Design System](https://design.digital.go.jp/dads/) and its [implementation](https://github.com/digital-go-jp/design-system-example-components-html).
+The CSS layout is based on the [Digital Agency Design System](https://design.digital.go.jp/dads/) and reuses selected components from its [example implementation](https://github.com/digital-go-jp/design-system-example-components-html).
 
 ## License
 

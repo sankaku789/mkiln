@@ -2,12 +2,58 @@ package mkiln
 
 import (
 	"bytes"
+	"io"
 	"os"
 	"path/filepath"
 	"reflect"
+	"runtime"
 	"strings"
 	"testing"
 )
+
+func TestMain(m *testing.M) {
+	if os.Getenv("MKILN_FAKE_COMMAND") == "1" {
+		os.Exit(0)
+	}
+	os.Exit(m.Run())
+}
+
+func setTestConfigHome(t *testing.T, dir string) {
+	t.Helper()
+	t.Setenv("XDG_CONFIG_HOME", dir)
+	t.Setenv("APPDATA", dir)
+}
+
+func writeFakeCommand(t *testing.T, dir, name string) string {
+	t.Helper()
+	if runtime.GOOS == "windows" {
+		name += ".exe"
+	}
+
+	srcPath, err := os.Executable()
+	if err != nil {
+		t.Fatal(err)
+	}
+	src, err := os.Open(srcPath)
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer src.Close()
+
+	dstPath := filepath.Join(dir, name)
+	dst, err := os.OpenFile(dstPath, os.O_WRONLY|os.O_CREATE|os.O_EXCL, 0o755)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if _, err := io.Copy(dst, src); err != nil {
+		dst.Close()
+		t.Fatal(err)
+	}
+	if err := dst.Close(); err != nil {
+		t.Fatal(err)
+	}
+	return dstPath
+}
 
 func TestParseArgsAllowsOptionsAfterInput(t *testing.T) {
 	input := filepath.Join(t.TempDir(), "note.md")
@@ -77,6 +123,34 @@ func TestEmbeddedHTMLDefaultsUseMathML(t *testing.T) {
 	}
 }
 
+func TestEmbeddedDefaultCSSIncludesPrintProfile(t *testing.T) {
+	data, err := assets.ReadFile("assets/default.css")
+	if err != nil {
+		t.Fatal(err)
+	}
+	css := string(data)
+	for _, rule := range []string{
+		"src/global.css",
+		"src/components/link/link.css",
+		"src/components/blockquote/blockquote.css",
+		"src/components/image/image.css",
+		"src/components/toc/toc.css",
+		".storybook/prose.css",
+		"@media print",
+		"@page",
+		"#TOC,",
+		"break-after: avoid-page",
+		"break-inside: avoid-page",
+		"table-header-group",
+		"tr {",
+		"white-space: pre-wrap",
+	} {
+		if !strings.Contains(css, rule) {
+			t.Errorf("default.css does not contain %q", rule)
+		}
+	}
+}
+
 func TestResolveTypstRejectsNonTypOutput(t *testing.T) {
 	_, err := resolveTypst(Options{Input: "note.md", Output: "note.pdf", Typst: true})
 	if err == nil || !strings.Contains(err.Error(), ".typ") {
@@ -85,7 +159,7 @@ func TestResolveTypstRejectsNonTypOutput(t *testing.T) {
 }
 
 func TestEnsureUserConfigDoesNotOverwrite(t *testing.T) {
-	t.Setenv("XDG_CONFIG_HOME", t.TempDir())
+	setTestConfigHome(t, t.TempDir())
 	if err := ensureUserConfig(); err != nil {
 		t.Fatal(err)
 	}
@@ -116,16 +190,14 @@ func TestRunTypstDoesNotCreateConfig(t *testing.T) {
 	if err := os.Mkdir(binDir, 0o755); err != nil {
 		t.Fatal(err)
 	}
-	pandoc := filepath.Join(binDir, "pandoc")
-	if err := os.WriteFile(pandoc, []byte("#!/bin/sh\nexit 0\n"), 0o755); err != nil {
-		t.Fatal(err)
-	}
+	writeFakeCommand(t, binDir, "pandoc")
 	input := filepath.Join(root, "note.md")
 	if err := os.WriteFile(input, nil, 0o644); err != nil {
 		t.Fatal(err)
 	}
-	t.Setenv("PATH", binDir)
-	t.Setenv("XDG_CONFIG_HOME", configHome)
+	t.Setenv("PATH", binDir+string(os.PathListSeparator)+os.Getenv("PATH"))
+	t.Setenv("MKILN_FAKE_COMMAND", "1")
+	setTestConfigHome(t, configHome)
 	var stdout, stderr bytes.Buffer
 	if code := Run([]string{input, "--typst"}, "test", &stdout, &stderr); code != 0 {
 		t.Fatalf("Run() = %d, stderr = %q", code, stderr.String())

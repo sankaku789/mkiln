@@ -84,7 +84,8 @@ go build ./cmd/mkiln
 ```
 
 ## 参考
-CSSレイアウトは、[デジタル庁デザインシステム](https://design.digital.go.jp/dads/)及びその[実装](https://github.com/digital-go-jp/design-system-example-components-html)を参考に作成しています。
+CSSレイアウトは、[デジタル庁デザインシステム](https://design.digital.go.jp/dads/)を参考にしその[サンプル実装](https://github.com/digital-go-jp/design-system-example-components-html)のコンポーネントを一部利用しています。
+
 
 ## ライセンス
 MITライセンスで提供されます。
