@@ -586,6 +586,13 @@ textarea {
     widows: 3;
   }
 
+  p:has(> img),
+  p:has(> svg),
+  p:has(> picture) {
+    break-inside: avoid-page;
+    page-break-inside: avoid;
+  }
+
   figure,
   img,
   svg,
