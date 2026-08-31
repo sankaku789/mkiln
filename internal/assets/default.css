@@ -584,6 +584,8 @@ textarea {
   pre {
     break-inside: auto;
     overflow: visible;
+    print-color-adjust: exact;
+    -webkit-print-color-adjust: exact;
   }
 
   table {
