@@ -576,9 +576,16 @@ textarea {
   }
 
   figure,
-  pre,
   blockquote {
     break-inside: avoid-page;
+  }
+
+  div.sourceCode,
+  pre {
+    break-inside: auto;
+    overflow: visible;
+    print-color-adjust: exact;
+    -webkit-print-color-adjust: exact;
   }
 
   table {
