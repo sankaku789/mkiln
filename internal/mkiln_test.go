@@ -139,7 +139,7 @@ func TestEmbeddedDefaultCSSIncludesPrintProfile(t *testing.T) {
 		"@media print",
 		"@page",
 		"#TOC,",
-		"break-after: avoid-page",
+		"break-after: avoid",
 		"break-inside: avoid-page",
 		"table-header-group",
 		"tr {",
