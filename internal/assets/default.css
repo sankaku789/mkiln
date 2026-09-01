@@ -556,8 +556,12 @@ textarea {
     color: #000000;
   }
 
-  body {
+  html {
     font-size: 10pt;
+  }
+
+  body {
+    font-size: 1rem;
   }
 
   h1,
