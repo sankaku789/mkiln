@@ -614,9 +614,16 @@ textarea {
     page-break-inside: avoid;
   }
 
+  figure:has(div.sourceCode),
+  figure:has(pre) {
+    break-inside: auto;
+    page-break-inside: auto;
+  }
+
   div.sourceCode,
   pre {
     break-inside: auto;
+    page-break-inside: auto;
     overflow: visible;
     print-color-adjust: exact;
     -webkit-print-color-adjust: exact;
@@ -637,7 +644,12 @@ textarea {
   img,
   svg {
     max-width: 100%;
+    max-height: 240mm;
     height: auto;
+  }
+
+  img {
+    object-fit: contain;
   }
 
   pre,
