@@ -606,6 +606,10 @@ textarea {
     text-indent: 0;
   }
 
+  figure {
+    margin-inline: auto;
+  }
+
   figure,
   img,
   svg,
